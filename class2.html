@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // (function () {
+        //     // console.log(name)
+        //     // var name = "hasain"
+        //     // console.log(name)
+        //     // let name = "hasain"
+        //     // var batch = "js";
+        //     // var batch;
+        //     // batch = "html"
+        //     // batch = "css"
+        //     // let name;
+        //     // let name;
+        //     // name = "hasnain"
+
+        //     // console.log(batch, "batch");
+
+
+        // })()
+
+        // // let name1 = "ali";
+        // // let name2 = name1;
+        // // name1 = "hasnain";
+        // // console.log(name1, "name1")
+        // // console.log(name2, "name2")
+
+
+        // // const obj1 = { name: "ali", age: 28 };
+        // // const obj2 = obj1;
+        // // obj1.name = "usman";
+        // // console.log(obj1, "obj1")
+        // // console.log(obj2, "obj2")
+
+        // let age = 28
+        // // let isAdult;
+        // // if (age > 18) {
+        // //     isAdult = true
+        // // } else {
+        // //     isAdult = false
+        // // }
+        // let isAdult = age > 18 ? true : false
+
+        // console.log(isAdult, "isAdult");
+        // let age = 28
+        // let isAdult;
+        // if (age > 18) {
+        //     isAdult = true
+        // } 
+
+        // let username = NaN;
+
+        // let name = username || "Guest";
+
+        // console.log(name);
+        // const user = null;
+        // // const user = { name: "ali" };
+
+        // console.log(user && user.name);
+
+        const user = {
+            // name: "Ali",
+            age: 25,
+            address: {
+                city: "karachi",
+                geo: {
+                    long: "10.32",
+                    lat: "56.878"
+                }
+            }
+        };
+
+        console.log(user && user.address && user.address.city);
+        console.log(user && user.address && user.address.geo && user.address.geo.lat);
+        console.log( user?.address?.geo?.lat);
+    </script>
+</body>
+
+</html>
