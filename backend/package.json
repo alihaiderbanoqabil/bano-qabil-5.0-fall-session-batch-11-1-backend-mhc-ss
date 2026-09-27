@@ -1,0 +1,38 @@
+{
+  "name": "batch-11-1-backend-mhc-ss",
+  "version": "1.0.0",
+  "description": "This is our backend",
+  "keywords": [
+    "backend",
+    "server",
+    "ecommerce"
+  ],
+  "homepage": "https://github.com/alihaiderbanoqabil/bano-qabil-5.0-fall-session-batch-11-1-backend-mhc-ss#readme",
+  "bugs": {
+    "url": "https://github.com/alihaiderbanoqabil/bano-qabil-5.0-fall-session-batch-11-1-backend-mhc-ss/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alihaiderbanoqabil/bano-qabil-5.0-fall-session-batch-11-1-backend-mhc-ss.git"
+  },
+  "license": "ISC",
+  "author": "Ali Haider",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0",
+    "mongoose": "^9.10.2",
+    "multer": "^2.4.0",
+    "xss": "^1.0.15"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
