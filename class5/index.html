@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 of JS</title>
+</head>
+
+<body>
+    <h1>Class 5 of JS</h1>
+
+    <script>
+        // const name = "ali"
+
+        const student = {
+            name: "ali",
+            age: 50,
+            address: {
+                city: "karachi",
+                country: "Pakistan",
+                geo: {
+                    long: 23.098,
+                    lat: -56.67
+                }
+            },
+            // greet: function () {
+
+            // },
+            // greet() {
+
+            // }
+        }
+
+        // const {
+        //     name: myName,
+        //     age = 28,
+        //     address: {
+        //         city,
+        //         country,
+        //         geo: {
+        //             long,
+        //             lat
+        //         },
+        //         geo
+        //     },
+        //     address
+        // } = student
+        // console.log(long, city, geo, myName, age);
+
+        // const {
+        //     age,
+        //     name,
+        //     ...restStudentInfo
+        // } = student
+
+        // const lat = student.address.geo.lat
+        // const geo = student.address.geo
+        // const address = student.address
+
+        // console.log(lat);
+        // console.log(lat);
+        // console.log(lat);
+        // console.log(lat);
+        // console.log(student, "student");
+        // console.log(restStudentInfo, "restStudentInfo");
+
+        // const students = ["Ali", "Haris", "Hasnain", "Usman"];
+
+        // console.log(students[1]);
+
+        // const [std1Name, std2Name, ...restStdNames] = students;
+        // console.log(std1Name);
+        // console.log(std2Name);
+        // console.log(restStdNames);
+
+
+
+        console.log(student);
+        console.log(Object.keys(student));
+        console.log(Object.keys(student).length);
+        console.log(Object.values(student));
+        const entries = Object.entries(student)
+        console.log(entries);
+        // Object.freeze(student)
+
+        student.name = "Hasnain"
+        student.gender = "Male"
+        delete student.age
+        console.log(Object.fromEntries(entries));
+        console.log(Object.isFrozen(entries));
+        console.log(Object.isFrozen(student));
+        console.log(student.age);
+        console.log(student?.address?.geo);
+        console.log(student.hasOwnProperty("address") ? student.address.city : "Karachi");
+        const key = "gender";
+
+        // student[key] = "male"
+        student.key = "male"
+        console.log(student);
+        const pi = Math.PI
+        console.log(Math.abs(-34));
+        console.log(Math.abs(876));
+        console.log(Math.min(1, 38, 23, 432, 13));
+        console.log(Math.max(1, 38, 23, 432, 13));
+        console.log(Math.pow(3, 3));
+        console.log(Math.sqrt(64));
+        console.log(Math.random());
+        console.log(Date.now());
+        const currentDate = new Date();
+        console.log(currentDate);
+        console.log(currentDate.getDate());
+        console.log(currentDate.getMonth());
+        console.log(currentDate.getFullYear());
+        console.log(currentDate.getTime());
+        console.log(currentDate.getHours());
+        console.log(currentDate.getMinutes());
+        console.log(currentDate.getSeconds());
+        console.log(currentDate.getMilliseconds());
+        console.log(currentDate.toDateString());
+        console.log(currentDate.toISOString());
+        console.log(currentDate.toTimeString());
+        console.log(currentDate.toLocaleString());
+
+    </script>
+</body>
+
+</html>

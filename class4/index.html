@@ -9,6 +9,130 @@
 
 <body>
     <h1>Class 3 of JS</h1>
+    <h2 id="heading2" class="heading head">Class 3 of JS</h1>
+        <h3 class="heading head">Class 3 of JS</h1>
+            <script>
+
+                // name("ali", "haider")
+
+                // function name(params) {
+                //     console.log(arguments, "arguments");
+
+                // }
+
+                // const add = () => {
+                //     console.log(arguments, "arguments");
+
+                // }
+                // add()
+                const add2 = (n1, n2) => {
+                    return n1 + n2
+                }
+                const add3 = (n1, n2, n3) => {
+                    return n1 + n2 + n3
+                }
+                const add = (...args) => {
+                    console.log(this, "this");
+
+                    let sum = 0;
+                    for (const element of args) {
+                        sum = sum + element
+                    }
+                    return sum
+                }
+                // console.log("add: ", add(10, 40, 50, 30, 50, 50, 50));
+                // const merge = function (params) {
+
+                // }
+                // merge()
+                function sumOfNNumbers(params) {
+                    console.log(this, "this");
+
+                    let sum = 0;
+                    for (const element of arguments) {
+                        sum = sum + element
+                    }
+                    return sum
+                }
+                // const sum = sumOfNNumbers(10, 40, 50, 30)
+                // console.log("sum: ", sum);
+
+                const student1 = {
+                    name: "ali",
+                    age: 28,
+                    address: {
+                        city: "karachi",
+                        country: "Pakistan",
+                        geo: {
+                            long: 23.098,
+                            lat: -56.67
+                        }
+                    },
+                    // greet: function () {
+                    //     console.log(`My name is ${this.name}`);
+                    // },
+                    // greeting: () => {
+                    //     console.log(`My name is ${this.name}`);
+                    // }
+                }
+                // const student2 = student1; // normal copy
+                // const student2 = {...student1,}; // shallow copy
+                // const student2 = { ...student1, address: { ...student1.address } }; // nested shallow copy
+                // const student2 = JSON.parse(JSON.stringify(student1)); // deep copy
+                const student2 = structuredClone(student1); // deep copy
+
+                // student1.greet()
+                // student1.greeting()
+                student1.name = "hasnain"
+                student1.address.city = "Pindi"
+                student1.address.geo.long = 20.45
+                console.log(student1, "student1");
+                console.log(student2, "student2");
+                // console.log(student1.age);
+                // delete student1.age
+                // console.log(student1.age);
+
+                const array1 = [16, 20, 39]
+                // const array2 = array1 // normal copy
+                const array2 = [...array1]
+                array1[1] = 40
+                // delete array1[1]
+                console.log(array1, "array1");
+                console.log(array2, "array2");
+
+                const users = [
+                    {
+                        id: 1,
+                        name: "Ali",
+                        age: 25
+                    },
+                    {
+                        id: 2,
+                        name: "Ahmed",
+                        age: 30
+                    },
+                    {
+                        id: 3,
+                        name: "Hamza",
+                        age: 22
+                    }
+                ];
+
+                // DOM 
+
+                // console.log(window, "window");
+                // console.log(document, "document");
+                const h2 = document.getElementById("heading2")
+                console.log(h2, "h2");
+
+                // const headings = document.getElementsByClassName("heading")
+                const headings = document.querySelectorAll(".heading.head")
+                console.log(headings, "headings");
+                h2.addEventListener("click", function () {
+                    console.log("clicking");
+
+                })
+            </script>
 </body>
 
 </html>
