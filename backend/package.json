@@ -18,10 +18,10 @@
   "license": "ISC",
   "author": "Ali Haider",
   "type": "commonjs",
-  "main": "index.js",
+  "main": "file-system.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "dev": "nodemon file-system.js",
+    "start": "node file-system.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
