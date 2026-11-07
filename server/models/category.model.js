@@ -1,7 +1,6 @@
+const { Schema, model } = require("mongoose");
 
-const mongoose = require("mongoose");
-
-const categorySchema = new mongoose.Schema(
+const categorySchema = new Schema(
     {
         name: {
             type: String,
@@ -29,10 +28,14 @@ const categorySchema = new mongoose.Schema(
             default: null,
         },
 
-        status: {
-            type: String,
-            enum: ["active", "inactive"],
-            default: "active",
+        // status: {
+        //     type: String,
+        //     enum: ["active", "inactive"],
+        //     default: "active",
+        // },
+        isActive: {
+            type: Boolean,
+            default: true,
         },
     },
     {
@@ -40,6 +43,6 @@ const categorySchema = new mongoose.Schema(
     }
 );
 
-const Category = mongoose.model("Category", categorySchema);
+const Category = model("Category", categorySchema);
 
 module.exports = Category;

@@ -1,16 +1,15 @@
+const { Schema, model } = require("mongoose");
 
-const mongoose = require("mongoose");
-
-const ratingSchema = new mongoose.Schema(
+const ratingSchema = new Schema(
     {
         user: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: "User",
             required: true,
         },
 
         product: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: "Product",
             required: true,
         },
@@ -39,6 +38,6 @@ ratingSchema.index(
     { unique: true }
 );
 
-const Rating = mongoose.model("Rating", ratingSchema);
+const Rating = model("Rating", ratingSchema);
 
 module.exports = Rating;
