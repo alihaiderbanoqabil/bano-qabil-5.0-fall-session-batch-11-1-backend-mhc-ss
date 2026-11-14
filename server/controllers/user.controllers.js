@@ -1,11 +1,11 @@
-// const userService = require("../services/user.service");
-const { createUser, getAllUsers } = require("../services/user.service");
+const userService = require("../services/user.service");
+// const { createUser, getAllUsers } = require("../services/user.service");
 
 // CREATE USER
 
 const createUser = (req, res) => {
     try {
-        const user = createUser(req.body);
+        const user = userService.createUser(req.body);
 
         return res.status(201).json({
             status: true,
@@ -65,7 +65,7 @@ const createUser = (req, res) => {
 
 // GET ALL USERS
 const getAllUsers = (req, res) => {
-    const users = getAllUsers();
+    const users = userService.getAllUsers();
 
     return res.status(200).json({
         status: true,

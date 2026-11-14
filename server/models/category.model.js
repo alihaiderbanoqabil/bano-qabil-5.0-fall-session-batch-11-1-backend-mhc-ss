@@ -1,48 +1,48 @@
-const { Schema, model } = require("mongoose");
+const mongoose = require("mongoose");
 
-const categorySchema = new Schema(
-    {
-        name: {
-            type: String,
-            required: [true, "Category name is required"],
-            trim: true,
-            unique: true,
-        },
-
-        slug: {
-            type: String,
-            required: true,
-            unique: true,
-            lowercase: true,
-            trim: true,
-        },
-
-        description: {
-            type: String,
-            trim: true,
-            default: "",
-        },
-
-        image: {
-            type: String,
-            default: null,
-        },
-
-        // status: {
-        //     type: String,
-        //     enum: ["active", "inactive"],
-        //     default: "active",
-        // },
-        isActive: {
-            type: Boolean,
-            default: true,
-        },
+const categorySchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Category name is required"],
+      unique: true,
+      trim: true,
     },
-    {
-        timestamps: true,
-    }
+    description: {
+      type: String,
+      trim: true,
+    },
+    slug: {
+      type: String,
+      unique: true,
+      lowercase: true,
+    },
+    image: {
+      type: String,
+      trim: true,
+      unique: true,
+    },
+    parentCategory: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      default: null,
+    },
+    // products: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Category",
+    //     required: [true, "Category is required"],
+    //   }
+    // ]
+  },
+  { timestamps: true }
 );
 
-const Category = model("Category", categorySchema);
+// Auto-generate slug from name
+categorySchema.pre("save", function () {
+  if (this.isModified("name")) {
+    this.slug = this.name.toLowerCase().trim().replace(/\s+/g, "-");
+  }
+});
 
-module.exports = Category;
+module.exports = mongoose.model("Category", categorySchema);

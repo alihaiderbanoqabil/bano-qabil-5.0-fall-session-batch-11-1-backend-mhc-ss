@@ -1,129 +1,69 @@
-const { Schema, model } = require("mongoose");
+const mongoose = require("mongoose");
 
-const orderItemSchema = new Schema(
-    {
-        product: {
-            type: Schema.Types.ObjectId,
-            ref: "Product",
-            required: true,
-        },
-
-        quantity: {
-            type: Number,
-            required: true,
-            min: 1,
-        },
-
-        price: {
-            type: Number,
-            required: true,
-            min: 0,
-        },
+const orderItemSchema = new mongoose.Schema(
+  {
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
     },
-    {
-        _id: false,
-    }
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    price: {
+      type: Number,
+      required: true, // price at time of order
+    },
+  },
+  { _id: false }
 );
 
-const orderSchema = new Schema(
-    {
-        orderNumber: {
-            type: String,
-            required: true,
-            unique: true,
-        },
-
-        user: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-
-        items: {
-            type: [orderItemSchema],
-            validate: {
-                validator: (items) => items.length > 0,
-                message: "Order must contain at least one product",
-            },
-        },
-
-        shippingAddress: {
-            fullName: {
-                type: String,
-                required: true,
-            },
-
-            phone: {
-                type: String,
-                required: true,
-            },
-
-            address: {
-                type: String,
-                required: true,
-            },
-
-            city: {
-                type: String,
-                required: true,
-            },
-
-            postalCode: {
-                type: String,
-                default: "",
-            },
-        },
-
-        subtotal: {
-            type: Number,
-            required: true,
-            min: 0,
-        },
-
-        shippingFee: {
-            type: Number,
-            default: 0,
-            min: 0,
-        },
-
-        totalAmount: {
-            type: Number,
-            required: true,
-            min: 0,
-        },
-
-        paymentMethod: {
-            type: String,
-            enum: ["cash_on_delivery", "card", "bank_transfer"],
-            default: "cash_on_delivery",
-        },
-
-        paymentStatus: {
-            type: String,
-            enum: ["pending", "paid", "failed", "refunded"],
-            default: "pending",
-        },
-
-        orderStatus: {
-            type: String,
-            enum: [
-                "pending",
-                "confirmed",
-                "processing",
-                "shipped",
-                "delivered",
-                "cancelled",
-            ],
-            default: "pending",
-        },
+const orderSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "User is required"],
     },
-    {
-        timestamps: true,
-        versionKey: false,
-        // _id: false,
-    }
+    items: {
+      // array of subdocuments
+      type: [orderItemSchema],
+      validate: {
+        validator: (arr) => arr.length > 0,
+        message: "Order must have at least one item",
+      },
+    },
+    totalAmount: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    status: {
+      type: String,
+      enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
+      default: "pending",
+    },
+    shippingAddress: {
+      street: String,
+      city: String,
+      state: String,
+      zip: String,
+      country: String,
+    },
+    paymentMethod: {
+      type: String,
+      enum: ["card", "cod", "paypal"],
+      default: "cod",
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "paid", "failed", "refunded"],
+      default: "pending",
+    },
+  },
+  { timestamps: true }
 );
 
-const Order = model("Order", orderSchema);
-
-module.exports = Order;
+module.exports = mongoose.model("Order", orderSchema);
