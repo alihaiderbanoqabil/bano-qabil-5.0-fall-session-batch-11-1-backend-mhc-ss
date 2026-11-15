@@ -21,6 +21,7 @@ const categorySchema = new mongoose.Schema(
       type: String,
       trim: true,
       unique: true,
+      sparse: true,
     },
     parentCategory: {
       type: mongoose.Schema.Types.ObjectId,

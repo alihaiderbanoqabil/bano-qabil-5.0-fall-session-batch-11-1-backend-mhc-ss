@@ -1,54 +1,85 @@
-const { randomUUID } = require("crypto");
-const users = require("../models/user.model");
+const User = require("../models/user.model");
+const { AppError } = require("../utils");
 
-// CREATE USER
-const createUser = (userData) => {
-    const user = {
-        id: randomUUID(),
-        ...userData,
+const createUser = async ({ name, email, password, phone, address }) => {
+    if (typeof name !== "string" || !name.trim() ||
+        typeof email !== "string" || !email.trim() ||
+        typeof password !== "string" || !password) {
+        throw new AppError("Name, email, and password are required", 400);
+    }
+    return User.create({ name, email, password, phone, address });
+};
+
+const login = async ({ email, password }) => {
+    if (typeof email !== "string" || !email.trim() ||
+        typeof password !== "string" || !password) {
+        throw new AppError("Email and password are required", 400);
+    }
+
+    const user = await User.findOne({ email: String(email).toLowerCase().trim() }).select("+password");
+    if (!user || !(await user.comparePassword(password))) {
+        throw new AppError("Invalid email or password", 401);
+    }
+    return user;
+};
+
+const getAllUsers = async (query = {}) => {
+    const page = Math.max(1, Number.parseInt(query.page, 10) || 1);
+    const limit = Math.min(100, Math.max(1, Number.parseInt(query.limit, 10) || 10));
+    const filter = {};
+    if (query.role === "admin" || query.role === "customer") filter.role = query.role;
+
+    const [data, total] = await Promise.all([
+        User.find(filter).select("-password -emailVerificationToken").sort("-createdAt")
+            .skip((page - 1) * limit).limit(limit),
+        User.countDocuments(filter),
+    ]);
+
+    return {
+        data,
+        pagination: {
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit),
+            hasNextPage: page < Math.ceil(total / limit),
+            hasPrevPage: page > 1,
+        },
     };
+};
 
-    users.push(user);
-
+const getUserById = async (id) => {
+    const user = await User.findById(id).select("-password -emailVerificationToken");
+    if (!user) throw new AppError("User not found", 404);
     return user;
 };
 
-// GET ALL USERS
-const getAllUsers = () => {
-    return users;
-};
+const updateProfile = async (id, updates) => {
+    const user = await User.findById(id);
+    if (!user) throw new AppError("User not found", 404);
 
-// GET SINGLE USER
-const getUserById = (id) => {
-    return users.find((user) => user.id === id);
-};
-
-// UPDATE USER
-const updateUser = (id, userData) => {
-    const user = getUserById(id);
-
-    if (!user) return null;
-
-    user.name = userData.name ?? user.name;
-    user.email = userData.email ?? user.email;
-    user.age = userData.age ?? user.age;
-
+    for (const field of ["name", "phone", "address"]) {
+        if (updates[field] !== undefined) user[field] = updates[field];
+    }
+    await user.save();
     return user;
 };
 
-// DELETE USER
-const deleteUser = (id) => {
-    const userIndex = users.findIndex((user) => user.id === id);
+const updateUser = async (id, updates) => {
+    const user = await User.findById(id);
+    if (!user) throw new AppError("User not found", 404);
 
-    if (userIndex === -1) return null;
-
-    return users.splice(userIndex, 1)[0];
+    for (const field of ["name", "email", "phone", "address", "role"]) {
+        if (updates[field] !== undefined) user[field] = updates[field];
+    }
+    await user.save();
+    return user;
 };
 
-module.exports = {
-    createUser,
-    getAllUsers,
-    getUserById,
-    updateUser,
-    deleteUser,
+const deleteUser = async (id) => {
+    const user = await User.findByIdAndDelete(id).select("-password -emailVerificationToken");
+    if (!user) throw new AppError("User not found", 404);
+    return user;
 };
+
+module.exports = { createUser, deleteUser, getAllUsers, getUserById, login, updateProfile, updateUser };

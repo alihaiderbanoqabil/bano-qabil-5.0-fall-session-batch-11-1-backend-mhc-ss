@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema(
             type: String,
             trim: true,
             unique: true,
+            sparse: true,
         },
         isEmailVerified: {
             type: Boolean,
@@ -59,7 +60,16 @@ const userSchema = new mongoose.Schema(
         //         }],
 
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+        toJSON: {
+            transform: (document, result) => {
+                delete result.password;
+                delete result.emailVerificationToken;
+                return result;
+            },
+        },
+    }
 );
 
 // Hash password before saving

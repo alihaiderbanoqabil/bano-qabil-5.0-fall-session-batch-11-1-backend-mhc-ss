@@ -1,141 +1,61 @@
 const userService = require("../services/user.service");
-// const { createUser, getAllUsers } = require("../services/user.service");
+const { getTokenSecret, signToken } = require("../utils");
 
-// CREATE USER
-
-const createUser = (req, res) => {
-    try {
-        const user = userService.createUser(req.body);
-
-        return res.status(201).json({
-            status: true,
-            message: "User created successfully",
-            data: user,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            status: false,
-            message: "Internal server error",
-            error: error.message,
-        });
-    }
-};
-
-// const createUser = (req, res) => {
-//     try {
-//         const { name, email, age } = req.body;
-
-//         const user = {
-//             id: randomUUID(),
-//             name,
-//             email,
-//             age,
-//         };
-
-//         users.push(user);
-
-//         return res.status(201).json({
-//             status: true,
-//             message: "User created successfully",
-//             data: user,
-//         });
-
-//     } catch (error) {
-//         return res.status(500).json({
-//             status: false,
-//             message: "Internal server error",
-//             error: error.message,
-//         });
-//     }
-// }
-
-// const createUser = (req, res, next) => {
-//     try {
-//         const user = userService.createUser(req.body);
-
-//         return res.status(201).json({
-//             status: true,
-//             message: "User created successfully",
-//             data: user,
-//         });
-//     } catch (error) {
-//         next(error);
-//     }
-// };
-
-// GET ALL USERS
-const getAllUsers = (req, res) => {
-    const users = userService.getAllUsers();
-
-    return res.status(200).json({
+const register = async (req, res) => {
+    getTokenSecret();
+    const user = await userService.createUser(req.body);
+    return res.status(201).json({
         status: true,
-        message: "Users fetched successfully",
-        data: users,
+        message: "User registered successfully",
+        data: { user, token: signToken(user) },
     });
 };
 
-// GET SINGLE USER
-const getUserById = (req, res) => {
-    const { id } = req.params;
-
-    const user = userService.getUserById(id);
-
-    if (!user) {
-        return res.status(404).json({
-            status: false,
-            message: "User not found",
-        });
-    }
-
+const login = async (req, res) => {
+    getTokenSecret();
+    const user = await userService.login(req.body);
     return res.status(200).json({
         status: true,
-        message: "User fetched successfully",
-        data: user,
+        message: "Login successful",
+        data: { user: user.toJSON(), token: signToken(user) },
     });
 };
 
-// UPDATE USER
-const updateUser = (req, res) => {
-    const { id } = req.params;
+const getMe = (req, res) => res.status(200).json({
+    status: true,
+    data: req.user,
+});
 
-    const user = userService.updateUser(id, req.body);
-
-    if (!user) {
-        return res.status(404).json({
-            status: false,
-            message: "User not found",
-        });
-    }
-
-    return res.status(200).json({
-        status: true,
-        message: "User updated successfully",
-        data: user,
-    });
+const updateMe = async (req, res) => {
+    const user = await userService.updateProfile(req.user.id, req.body);
+    return res.status(200).json({ status: true, message: "Profile updated", data: user });
 };
 
-// DELETE USER
-const deleteUser = (req, res) => {
-    const { id } = req.params;
+const getAllUsers = async (req, res) => {
+    const result = await userService.getAllUsers(req.query);
+    return res.status(200).json({ status: true, ...result });
+};
 
-    const user = userService.deleteUser(id);
+const getUserById = async (req, res) => {
+    const user = await userService.getUserById(req.params.id);
+    return res.status(200).json({ status: true, data: user });
+};
 
-    if (!user) {
-        return res.status(404).json({
-            status: false,
-            message: "User not found",
-        });
-    }
+const updateUser = async (req, res) => {
+    const user = await userService.updateUser(req.params.id, req.body);
+    return res.status(200).json({ status: true, message: "User updated", data: user });
+};
 
-    return res.status(200).json({
-        status: true,
-        message: "User deleted successfully",
-        data: user,
-    });
+const deleteUser = async (req, res) => {
+    const user = await userService.deleteUser(req.params.id);
+    return res.status(200).json({ status: true, message: "User deleted", data: user });
 };
 
 module.exports = {
-    createUser,
+    register,
+    login,
+    getMe,
+    updateMe,
     getAllUsers,
     getUserById,
     updateUser,
