@@ -43,12 +43,17 @@ const userSchema = new mongoose.Schema(
         isEmailVerified: {
             type: Boolean,
             default: false,
+            select: false,
         },
         emailVerificationToken: {
             type: String,
             default: null,
             select: false, // don't return password by default
         },
+        // isActive: {
+        //     type: Boolean,
+        //     default: false,
+        // },
 
         // embedding
         //  addresses: [{
@@ -62,9 +67,11 @@ const userSchema = new mongoose.Schema(
     },
     {
         timestamps: true,
+        versionKey: false,
         toJSON: {
             transform: (document, result) => {
                 delete result.password;
+                delete result.isEmailVerified;
                 delete result.emailVerificationToken;
                 return result;
             },
@@ -88,6 +95,7 @@ userSchema.pre("save", async function () {
 
 // Instance method to compare password
 userSchema.methods.comparePassword = async function (candidatePassword) {
+    console.log("this.password", this.password);
     return bcrypt.compare(candidatePassword, this.password);
 };
 

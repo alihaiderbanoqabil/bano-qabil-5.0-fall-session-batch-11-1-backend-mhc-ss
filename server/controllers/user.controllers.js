@@ -1,13 +1,18 @@
 const userService = require("../services/user.service");
-const { getTokenSecret, signToken } = require("../utils");
+const { getTokenSecret, createToken } = require("../utils");
 
 const register = async (req, res) => {
     getTokenSecret();
     const user = await userService.createUser(req.body);
+    // const { password, isEmailVerified, emailVerificationToken, ...userDetails } = user.toJSON();
+    // console.log("user", userDetails);
     return res.status(201).json({
         status: true,
         message: "User registered successfully",
-        data: { user, token: signToken(user) },
+        data: {
+            user: user,
+            token: createToken(user, "15m"),
+        },
     });
 };
 
@@ -17,7 +22,7 @@ const login = async (req, res) => {
     return res.status(200).json({
         status: true,
         message: "Login successful",
-        data: { user: user.toJSON(), token: signToken(user) },
+        data: { user: user.toJSON(), token: createToken(user, "7d") },
     });
 };
 

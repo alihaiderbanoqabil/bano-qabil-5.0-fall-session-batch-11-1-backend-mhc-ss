@@ -1,4 +1,4 @@
-const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 
 const TOKEN_ISSUER = "bano-qabil-api";
 const TOKEN_LIFETIME_SECONDS = 7 * 24 * 60 * 60;
@@ -18,66 +18,51 @@ const getTokenSecret = () => {
     return secret;
 };
 
-const base64UrlEncode = (value) =>
-    Buffer.from(value).toString("base64")
-        .replace(/=/g, "")
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_");
-
 const signToken = (user) => {
-    const now = Math.floor(Date.now() / 1000);
-    const header = base64UrlEncode(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-    const payload = base64UrlEncode(JSON.stringify({
-        sub: user.id || user._id.toString(),
-        role: user.role,
-        iss: TOKEN_ISSUER,
-        iat: now,
-        exp: now + TOKEN_LIFETIME_SECONDS,
-    }));
-    const input = `${header}.${payload}`;
-    const signature = crypto.createHmac("sha256", getTokenSecret()).update(input).digest("base64")
-        .replace(/=/g, "")
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_");
+    const subject = user.id || user._id?.toString();
+    if (!subject) {
+        throw new AppError("Cannot sign a token without a user id", 500);
+    }
 
-    return `${input}.${signature}`;
+    return jwt.sign(
+        { role: user.role },
+        getTokenSecret(),
+        {
+            algorithm: "HS256",
+            subject,
+            issuer: TOKEN_ISSUER,
+            expiresIn: TOKEN_LIFETIME_SECONDS,
+        }
+    );
 };
 
 const verifyToken = (token) => {
-    const parts = token.split(".");
-    if (parts.length !== 3) throw new AppError("Invalid or expired token", 401);
+    const secret = getTokenSecret();
 
-    const [headerPart, payloadPart, signaturePart] = parts;
-    const expectedSignature = crypto.createHmac("sha256", getTokenSecret())
-        .update(`${headerPart}.${payloadPart}`)
-        .digest();
-    const suppliedSignature = Buffer.from(
-        signaturePart.replace(/-/g, "+").replace(/_/g, "/"),
-        "base64"
-    );
-
-    if (suppliedSignature.length !== expectedSignature.length ||
-        !crypto.timingSafeEqual(suppliedSignature, expectedSignature)) {
-        throw new AppError("Invalid or expired token", 401);
-    }
-
-    let header;
-    let payload;
     try {
-        header = JSON.parse(Buffer.from(headerPart.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString());
-        payload = JSON.parse(Buffer.from(payloadPart.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString());
+        const payload = jwt.verify(token, secret, {
+            algorithms: ["HS256"],
+            issuer: TOKEN_ISSUER,
+        });
+
+        if (typeof payload.sub !== "string" || !payload.sub ||
+            !["customer", "admin"].includes(payload.role)) {
+            throw new AppError("Invalid or expired token", 401);
+        }
+
+        return payload;
     } catch {
         throw new AppError("Invalid or expired token", 401);
     }
+};
 
-    if (header.alg !== "HS256" || payload.iss !== TOKEN_ISSUER ||
-        typeof payload.sub !== "string" || !payload.sub ||
-        !["customer", "admin"].includes(payload.role) ||
-        !Number.isInteger(payload.exp) || payload.exp <= Math.floor(Date.now() / 1000)) {
-        throw new AppError("Invalid or expired token", 401);
-    }
-
-    return payload;
+const createToken = (user, expiryTime = "7d") => {
+    return jwt.sign(
+        { id: user._id, email: user.email, phone: user.phone, role: user.role },
+        // process.env.JWT_SECRET,
+        getTokenSecret(),
+        { expiresIn: expiryTime }
+    );
 };
 
 const asyncHandler = (handler) => (req, res, next) =>
@@ -85,4 +70,4 @@ const asyncHandler = (handler) => (req, res, next) =>
 
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-module.exports = { AppError, asyncHandler, escapeRegex, getTokenSecret, signToken, verifyToken };
+module.exports = { AppError, createToken, asyncHandler, escapeRegex, getTokenSecret, signToken, verifyToken };

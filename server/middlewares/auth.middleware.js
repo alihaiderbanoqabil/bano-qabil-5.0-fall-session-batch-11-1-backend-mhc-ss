@@ -19,6 +19,30 @@ const { AppError, asyncHandler, verifyToken } = require("../utils");
 //   }
 // };
 
+// const getTokenFromRequest = (req) => {
+//     const cookieToken = readTokenCookie(req);
+//     if (cookieToken) return cookieToken;
+
+//     const authHeader = req.headers.authorization;
+//     if (authHeader && authHeader.startsWith("Bearer ")) return authHeader.split(" ")[1];
+
+//     return null;
+// };
+
+// const authenticate = (req, res, next) => {
+//     const token = getTokenFromRequest(req);
+
+//     if (!token) {
+//         throw new AppError("Login required for this action.", 401);
+//     }
+
+//     // jwt.verify JsonWebTokenError / TokenExpiredError throw karta hai. Express
+//     // middleware ke sync throws khud pakar leta hai, aur errorHandler dono ko 401 bana deta hai.
+//     req.user = jwt.verify(token, process.env.JWT_SECRET);
+//     next();
+// };
+
+
 const authenticate = asyncHandler(async (req, res, next) => {
     const authorization = req.get("authorization");
     if (!authorization || !authorization.startsWith("Bearer ")) {

@@ -17,6 +17,7 @@ const login = async ({ email, password }) => {
     }
 
     const user = await User.findOne({ email: String(email).toLowerCase().trim() }).select("+password");
+    console.log("user", user);
     if (!user || !(await user.comparePassword(password))) {
         throw new AppError("Invalid email or password", 401);
     }
